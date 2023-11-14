@@ -15,6 +15,7 @@ class Ball():
         self.rect = pygame.Rect(x, y, width, height)
         self.ball_speed_x = 6
         self.ball_speed_y = 6
+        self.score_timer = None
 
 
     #method for adding the balls speed to itself
@@ -31,5 +32,12 @@ class Ball():
     def restart_ball(self):
         self.rect.x = self.original_x
         self.rect.y = self.original_y
-        self.ball_speed_y *= random.choice((1, -1))      
-        self.ball_speed_x *= random.choice((1, -1))
+
+        current_time = pygame.time.get_ticks()
+
+        if current_time - self.score_timer < 3100:
+            self.ball_speed_x, self.ball_speed_y, = 0, 0
+        else:
+            self.ball_speed_y = 7 * random.choice((1, -1))      
+            self.ball_speed_x = 7 * random.choice((1, -1))
+            self.score_timer = None

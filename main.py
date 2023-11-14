@@ -7,18 +7,21 @@ import sys
 #Comments will be more elaborate, as this is my first time working with pygame.
 
 def ball_animation(ball):
-
+    global current_time
     #Reverse ball speed when collision occurs with screen or player
     if ball.rect.top <= 0 or ball.rect.bottom >= screen_height:
         ball.ball_speed_y *= -1
+        
     if ball.rect.left <= 0:
-        ball.restart_ball()
         player1.score()
-        # countdown()
+        ball.score_timer = pygame.time.get_ticks()
+        current_time = pygame.time.get_ticks()
+
     if ball.rect.right >= screen_width:
-        ball.restart_ball()
         player2.score()
-        # countdown()
+        ball.score_timer = pygame.time.get_ticks()
+        current_time = pygame.time.get_ticks()
+
     if ball.rect.colliderect(player1) or ball.rect.colliderect(player2):
         ball.ball_speed_x *= -1
 
@@ -31,13 +34,11 @@ def player_animation():
         player1.rect.top = 0
     if player1.rect.bottom >= screen_height:
         player1.rect.bottom = screen_height
-
-# def countdown():
-    #set a timer so ball doesn't instantly move after scoring
     
 
 pygame.init() #initiates all pygame modules, required for all pygame code
 clock = pygame.time.Clock()
+
 
 #set up main window
 screen_width = 1280
@@ -57,6 +58,7 @@ color = pygame.Color('white')
 #font used for score
 font = pygame.font.Font('freesansbold.ttf', 32)
 
+current_time = None
 
 while True:
     #pygame calls all user interactions events
@@ -101,6 +103,24 @@ while True:
     screen.blit(player1_text, (660, 470))
     player2_text = font.render(f"{player2.player_score}", True, color)
     screen.blit(player2_text, (600, 470))
+    
+
+
+    #using pythons ability to change types, check if we set the timer back to None
+    #if so, restart the ball.
+    if ball.score_timer:
+        ball.restart_ball()
+        if ball.score_timer:
+            if current_time - ball.score_timer < 1000:
+                countdown3 = font.render("3", True, color)
+                screen.blit(countdown3, (screen_width/2 - 10, screen_height/2 + 20))
+            if 1000 < current_time - ball.score_timer < 2000:
+                countdown2 = font.render("2", True, color)
+                screen.blit(countdown2, (screen_width/2 - 10, screen_height/2 + 20))
+            if 2000 < current_time - ball.score_timer < 3000:
+                countdown1 = font.render("1", True, color)
+                screen.blit(countdown1, (screen_width/2 - 10, screen_height/2 + 20))
+        
 
 
     pygame.display.flip() #Take everything from the loop and draw a picture of it
